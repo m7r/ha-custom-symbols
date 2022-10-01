@@ -1,0 +1,16 @@
+{
+  "name": "ha-custom-symbols",
+  "private": false,
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "terser js/main.js -c -m -o custom_components/custom_symbols/main.js",
+    "test": "node test/server.js"
+  },
+  "keywords": [],
+  "author": "Martin R. Hufsky",
+  "license": "MIT",
+  "devDependencies": {
+    "terser": "^5.15.0"
+  }
+}
