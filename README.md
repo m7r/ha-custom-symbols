@@ -8,26 +8,25 @@
 4. Paste this repo's URL
 5. Select **Integration** in the dropdown
 6. Install **custom_symbols** from HACS
-7. Create folder config/custom_symbols
-8. Copy your svg files to folder config/custom_symbols
-9. Restart Home Assistant
-10. Home Assistant > Settings > Integrations > Add > Custom Symbols > Install
+7. Restart Home Assistant
+8. Home Assistant > Settings > Integrations > Add > Custom Symbols > Install
+9. Add your own svg files to folder /config/custom_symbols
 
 The icons should be usable in Home Assistant now. If it doesnt show up, try refreshing the page, private browsing or restart Home Assistant.
 
 ### Manual
 1. Copy `custom_components/custom_symbols` into your custom_components folder
-2. Create folder config/custom_symbols
-3. Copy your svg files to folder config/custom_symbols
-4. Restart Home Assistant
-5. Home Assistant > Settings > Integrations > Add > Custom-Symbols > Install
+2. Restart Home Assistant
+3. Home Assistant > Settings > Integrations > Add > Custom-Symbols > Install
+4. Add your own svg files to folder /config/custom_symbols
+
   
 The icons should be usable in Home Assistant now. If it doesnt show up, try refreshing the page, private browsing or restart Home Assistant
 
 ## Features
 
  - Supports Home Assistant's icon picker (2021.11.0+)
- - SVG files are **not** included, please use our own files
+ - Only one example SVG file included, please use our own files
  - Rendering Modes
    - Monochrome
    - Hierarchical **#h**
@@ -40,9 +39,9 @@ The icons should be usable in Home Assistant now. If it doesnt show up, try refr
  - Prefix: **cs**
  - Suffix: **#[mode[value]]**
  - SVG in config/custom_symbols:
-   - lightbulb.svg
    - bed.double.svg
- - Eg: **cs:bed.double** | **cs:lightbulb#h** | **cs:speaker.2.waves#25** | **cs:speaker.2.waves#m25**
+   - ha.svg
+ - Eg: **cs:bed.double** | **cs:ha#h** | **cs:ha#40** | **cs:ha#m40**
 
 
 ## Prepare SVG
@@ -63,13 +62,13 @@ Clear is only used for dynamic rendering to clear the background under the trans
 
 **Attention**: At least the monochrome class is required!
 
-Eg:
+Eg included ha.svg:
 ``` xml
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-0.61 -90 108 108">
-  <path class="monochrome-0 multicolor-0:beige hierarchical-0:primary" fill="#DEBB93" d="M56 …">
-  <path class="monochrome-1 multicolor-1:red hierarchical-1:primary" fill="#FF3B30" d="M25 …"/>
-  <path class="monochrome-2 multicolor-2:yellow hierarchical-2:primary" fill="#FFCC00" d="M40 …"/>
-  <path class="monochrome-3 multicolor-3:green hierarchical-3:primary" fill="#28CD41" d="M60 …"/>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="2.38 -90 108 108">
+  <path class="monochrome-0 multicolor-0:cyan hierarchical-0:tertiary" fill="#55BEF0" d="M20 …"/>
+  <path class="monochrome-1#clear%0 multicolor-1:white%0 hierarchical-1:primary%0" fill="#FFFFFF" d="M56 …"/>
+  <path class="monochrome-2#clear%34 multicolor-2:white%34 hierarchical-2:primary%34" fill="#FFFFFF" d="M45 …"/>
+  <path class="monochrome-3#clear%68 multicolor-3:white%68 hierarchical-3:primary%68" fill="#FFFFFF" d="M74 …"/>
 </svg>
 ```
 
@@ -86,8 +85,8 @@ The colors for palette and multicolor can be overwritten with css variables in y
   - cs-secondary: var(--primary-color)
   - cs-tertiary: var(--accent-color)
   - cs-base: var(--primary-text-color)
-  - and for each multicolor:name
-    - cs-name: [fill value]
+  - and for each multicolor:**name**
+    - cs-**name**: [fill value]
 
 ## Security
 
