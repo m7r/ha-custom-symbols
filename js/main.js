@@ -174,6 +174,7 @@ customElements.whenDefined('ha-icon').then(() => {
 
       const root = el.shadowRoot.querySelector('g')
       if (!root) return
+      root.innerText = ''
       icon.nodes.forEach(node => root.appendChild(node.cloneNode(true)))
     }
   };
