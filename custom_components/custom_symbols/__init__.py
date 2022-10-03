@@ -1,12 +1,8 @@
-import logging
-
 from homeassistant.components.frontend import add_extra_js_url
 from homeassistant.components.http.view import HomeAssistantView
 
 import json
 from os import walk, path
-
-LOGGER = logging.getLogger(__name__)
 
 DOMAIN = "custom_symbols"
 

@@ -1,9 +1,5 @@
-import logging
-
 from homeassistant import config_entries
 from shutil import copytree
-
-_LOGGER = logging.getLogger(__name__)
 
 @config_entries.HANDLERS.register("custom_symbols")
 class CustomSymbolsConfigFlow(config_entries.ConfigFlow):
