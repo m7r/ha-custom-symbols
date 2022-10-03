@@ -17,7 +17,7 @@ The icons should be usable in Home Assistant now. If it doesnt show up, try refr
 ### Manual
 1. Copy `custom_components/custom_symbols` into your custom_components folder
 2. Restart Home Assistant
-3. Home Assistant > Settings > Integrations > Add > Custom-Symbols > Install
+3. Home Assistant > Settings > Integrations > Add > Custom Symbols > Install
 4. Add your own svg files to folder /config/custom_symbols
 
   
@@ -38,17 +38,18 @@ The icons should be usable in Home Assistant now. If it doesnt show up, try refr
 ## Usage
  - Prefix: **cs**
  - Suffix: **#[mode[value]]**
- - SVG in config/custom_symbols:
-   - bed.double.svg
-   - ha.svg
- - Eg: **cs:bed.double** | **cs:ha#h** | **cs:ha#40** | **cs:ha#m40**
+ - Eg:
+    - SVG files in config/custom_symbols:
+      - bed.double.svg
+      - ha.svg
+    -   **cs:bed.double** | **cs:ha#h** | **cs:ha#40** | **cs:ha#m40**
 
 
 ## Prepare SVG
 
 The rendering is inspired by [Apple: SF Symbols](https://developer.apple.com/sf-symbols/).
 
-The easiest way to create svg files is the SF Symbol App and an [prepare script](https://github.com/m7r/ha-custom-symbols-prepare)
+The easiest way to create svg files is the SF Symbol App and an [prepare script](https://github.com/m7r/ha-custom-symbols-prepare).
 
 ### Apply Styles
 
@@ -61,8 +62,8 @@ Mode key words
   - multicolor
   - hierarchical (used for palette too)
 
-Break point defines until witch percent value the object should be semi transparent.  
-Clear is only used for dynamic rendering to clear the background under the transparent object in the same color.
+Break point defines until which value in percent the object should be semi transparent.  
+Clear is only used for variable color rendering to clear the background under the transparent object.
 
 **Attention**: At least the monochrome class is required!
 
