@@ -2,10 +2,9 @@
   "name": "ha-custom-symbols",
   "private": false,
   "version": "1.0.0",
-  "description": "",
+  "description": "Custom symbols for Home-Assistant",
   "scripts": {
-    "build": "terser js/main.js -c -m -o custom_components/custom_symbols/main.js",
-    "test": "node test/server.js"
+    "build": "terser js/main.js -c -m -o custom_components/custom_symbols/main.js"
   },
   "keywords": [],
   "author": "Martin R. Hufsky",

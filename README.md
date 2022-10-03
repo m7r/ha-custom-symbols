@@ -46,7 +46,11 @@ The icons should be usable in Home Assistant now. If it doesnt show up, try refr
 
 ## Prepare SVG
 
-The rendering is inspired by [Apple: SF Symbols](https://developer.apple.com/sf-symbols/) exported svg.
+The rendering is inspired by [Apple: SF Symbols](https://developer.apple.com/sf-symbols/).
+
+The easiest way to create svg files is the SF Symbol App and an [prepare script](https://github.com/m7r/ha-custom-symbols-prepare)
+
+### Apply Styles
 
 Class names define how the element should be rendered.  
 An name has this parts
@@ -71,11 +75,6 @@ Eg included ha.svg:
   <path class="monochrome-3#clear%68 multicolor-3:white%68 hierarchical-3:primary%68" fill="#FFFFFF" d="M74 …"/>
 </svg>
 ```
-
-### Testing
-
-If you have nodejs installed and download this repository you can run `npm run test -- [path to your local svg folder]`
-and open the URL in your browser to preview all your svg.
 
 ### Color Theme
 
