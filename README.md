@@ -32,7 +32,7 @@ The icons should be usable in Home Assistant now. If it doesnt show up, try refr
    - Hierarchical **#h**
    - Palette **#p**
    - Multicolor **#m**
-   - Dynamic Value **#h20** , **#20**
+   - Variable Color **#h20** , **#20**
   
 
 ## Usage

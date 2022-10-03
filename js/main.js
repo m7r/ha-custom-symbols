@@ -5,7 +5,7 @@ const CONFIG = {
   ':': 'color',
   '#': 'mode',
   '%': 'breakPoint',
-  d: {
+  v: {
     prefix: 'monochrome',
     fade: 0.6
   },
@@ -45,7 +45,7 @@ const group = (arr, fn) => arr.reduce((target, value, idx, arr) => {
 
 const mergeParts = parts => Object.values(group(parts, getColor))
 const combinePaths = paths => paths.map(path => path.getAttribute('d')).join(' ')
-const isMonochrome = path => String(path.classList).includes(CONFIG.d.prefix)
+const isMonochrome = path => String(path.classList).includes(CONFIG.v.prefix)
 
 const getOption = (name, target) =>
   name.split(/([-:#%])/)
@@ -88,7 +88,7 @@ const preProcessIcon = async (iconSet, iconName) => {
   const [icon, suffix = ''] = iconName.split("#")
   const [type, value] = suffix.split(/(\d+)/)
   const hasValue = value !== undefined
-  const config = CONFIG[type[0]] || (hasValue && CONFIG.d)
+  const config = CONFIG[type[0]] || (hasValue && CONFIG.v)
   let viewBox
   let path = ''
   let nodes = null
@@ -111,7 +111,7 @@ const preProcessIcon = async (iconSet, iconName) => {
 
     const length = parts.length
 
-    if (length == 1 && (config == CONFIG.d || config == CONFIG.h)) {
+    if (length == 1 && (config == CONFIG.v || config == CONFIG.h)) {
       path = parts[0].path.getAttribute('d')
     }
 
