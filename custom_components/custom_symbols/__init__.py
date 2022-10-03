@@ -15,7 +15,7 @@ LOADER_URL = f'/{DOMAIN}/main.js'
 LOADER_PATH = f'custom_components/{DOMAIN}/main.js'
 ICON_URL = f'/{DOMAIN}/icon'
 ICONLIST_URL = f'/{DOMAIN}/list'
-ICON_PATH = '/custom_symbols'
+ICON_PATH = 'custom_symbols'
 
 
 class ListingView(HomeAssistantView):
