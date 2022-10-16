@@ -25,10 +25,9 @@ const CONFIG = {
   m: {
     prefix: "multicolor",
     primary: "fill: var(--cs-primary, currentColor)",
-    secondary:
-      "fill: var(--cs-base, var(--primary-text-color, #000)); opacity: 0.5",
+    secondary: "fill: var(--cs-base, var(--primary-text-color, #000));",
     tertiary:
-      "fill: var(--cs-base, var(--primary-text-color, #000)); opacity: 0.2",
+      "fill: var(--cs-base, var(--primary-text-color, #000)); opacity: 0.3",
     useFill: true,
     fade: 0.6,
   },
@@ -139,15 +138,15 @@ const preProcessIcon = async (iconSet, iconName) => {
         .flatMap(checkOrder)
         .sort(compareFirstOrder)
         .map((items) => {
-        const node = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "path"
-        );
-        const style = createStyle(items, config);
+          const node = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path"
+          );
+          const style = createStyle(items, config);
           if (style && style != "undefined") node.setAttribute("style", style);
-        node.setAttribute("d", combinePaths(items.map(getPath)));
-        return node;
-      });
+          node.setAttribute("d", combinePaths(items.map(getPath)));
+          return node;
+        });
     }
   }
 
