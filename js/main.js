@@ -34,7 +34,7 @@ const CONFIG = {
   },
 };
 
-const compareOrder = (a, b) => a.order > b.order;
+const compareFirstOrder = ([a], [b]) => a.order > b.order;
 const getColor = (item) => item.color;
 const getPath = (item) => item.path;
 
@@ -45,6 +45,19 @@ const group = (arr, fn) =>
     else target[key] = [value];
     return target;
   }, Object.create(null));
+
+const checkOrder = (arr) =>
+  arr.reduce((target, value, idx, arr) => {
+    let current;
+    if (!idx || arr[idx - 1].order != value.order - 1) {
+      current = [];
+      target.push(current);
+    } else {
+      current = target[target.length - 1];
+    }
+    current.push(value);
+    return target;
+  }, []);
 
 const mergeParts = (parts) => Object.values(group(parts, getColor));
 const combinePaths = (paths) =>
@@ -111,7 +124,7 @@ const preProcessIcon = async (iconSet, iconName) => {
   viewBox = svg.getAttribute("viewBox");
 
   if (config) {
-    let parts = paths.flatMap(extractMode(config)).sort(compareOrder);
+    let parts = paths.flatMap(extractMode(config));
 
     if (hasValue) parts = parts.flatMap(makeDynamic(value));
 
@@ -122,7 +135,10 @@ const preProcessIcon = async (iconSet, iconName) => {
     }
 
     if (length && !path) {
-      nodes = mergeParts(parts).map((items) => {
+      nodes = mergeParts(parts)
+        .flatMap(checkOrder)
+        .sort(compareFirstOrder)
+        .map((items) => {
         const node = document.createElementNS(
           "http://www.w3.org/2000/svg",
           "path"
