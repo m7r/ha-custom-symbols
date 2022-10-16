@@ -144,7 +144,7 @@ const preProcessIcon = async (iconSet, iconName) => {
           "path"
         );
         const style = createStyle(items, config);
-        if (style) node.setAttribute("style", style);
+          if (style && style != "undefined") node.setAttribute("style", style);
         node.setAttribute("d", combinePaths(items.map(getPath)));
         return node;
       });
