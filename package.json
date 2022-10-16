@@ -10,6 +10,21 @@
   "author": "Martin R. Hufsky",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^8.25.0",
+    "eslint-config-prettier": "^8.5.0",
+    "prettier": "2.7.1",
     "terser": "^5.15.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "prettier"
+    ],
+    "env": {
+      "node": true,
+      "es2022": true
+    },
+    "parserOptions": {
+      "sourceType": "module"
+    }
   }
 }
