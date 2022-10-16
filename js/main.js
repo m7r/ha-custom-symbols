@@ -48,7 +48,7 @@ const group = (arr, fn) =>
 const checkOrder = (arr) =>
   arr.reduce((target, value, idx, arr) => {
     let current;
-    if (!idx || arr[idx - 1].order != value.order - 1) {
+    if (!idx || arr[idx - 1].order < value.order - 1) {
       current = [];
       target.push(current);
     } else {
