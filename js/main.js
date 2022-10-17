@@ -33,32 +33,8 @@ const CONFIG = {
   },
 };
 
-const compareFirstOrder = ([a], [b]) => a.order > b.order;
-const getColor = (item) => item.color;
+const compareOrder = (a, b) => a.order > b.order;
 const getPath = (item) => item.path;
-
-const group = (arr, fn) =>
-  arr.reduce((target, value, idx, arr) => {
-    const key = String(fn(value, idx, arr));
-    if (key in target) target[key].push(value);
-    else target[key] = [value];
-    return target;
-  }, Object.create(null));
-
-const checkOrder = (arr) =>
-  arr.reduce((target, value, idx, arr) => {
-    let current;
-    if (!idx || arr[idx - 1].order < value.order - 1) {
-      current = [];
-      target.push(current);
-    } else {
-      current = target[target.length - 1];
-    }
-    current.push(value);
-    return target;
-  }, []);
-
-const mergeParts = (parts) => Object.values(group(parts, getColor));
 const combinePaths = (paths) =>
   paths.map((path) => path.getAttribute("d")).join(" ");
 const isMonochrome = (path) => String(path.classList).includes(CONFIG.v.prefix);
@@ -76,14 +52,31 @@ const extractMode = (config) => (path) =>
     .filter((v) => v.startsWith(config.prefix))
     .map((name) => getOption(name, { path }));
 
-const makeDynamic = (value) => (item) => {
-  if (value <= item.breakPoint) {
-    const clear = item.mode == "clear";
-    const extra = { ...item, color: item.color + "Fade", fade: clear - 2 };
-    return clear ? [item, extra] : extra;
-  }
-  return item;
+const makeDynamic = (parts, value) => {
+  const extras = [];
+  return parts
+    .map((item) => {
+      if (value <= item.breakPoint) {
+        const clear = item.mode == "clear";
+        const extra = { ...item, color: item.color + "Fade", fade: clear - 2 };
+        if (clear) extras.push(extra);
+        else return extra;
+      }
+      return item;
+    })
+    .concat(extras);
 };
+
+const mergeColors = (parts) =>
+  parts.reduce((target, part) => {
+    const color = part.color ?? null;
+    if (target.color !== color) {
+      target.color = color;
+      target.push((target.current = []));
+    }
+    target.current.push(part);
+    return target;
+  }, []);
 
 const createStyle = (items, config) => {
   const last = items[items.length - 1];
@@ -123,9 +116,9 @@ const preProcessIcon = async (iconSet, iconName) => {
   viewBox = svg.getAttribute("viewBox");
 
   if (config) {
-    let parts = paths.flatMap(extractMode(config));
+    let parts = paths.flatMap(extractMode(config)).sort(compareOrder);
 
-    if (hasValue) parts = parts.flatMap(makeDynamic(value));
+    if (hasValue) parts = makeDynamic(parts, value);
 
     const length = parts.length;
 
@@ -134,19 +127,16 @@ const preProcessIcon = async (iconSet, iconName) => {
     }
 
     if (length && !path) {
-      nodes = mergeParts(parts)
-        .flatMap(checkOrder)
-        .sort(compareFirstOrder)
-        .map((items) => {
-          const node = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "path"
-          );
-          const style = createStyle(items, config);
-          if (style && style != "undefined") node.setAttribute("style", style);
-          node.setAttribute("d", combinePaths(items.map(getPath)));
-          return node;
-        });
+      nodes = mergeColors(parts).map((items) => {
+        const node = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path"
+        );
+        const style = createStyle(items, config);
+        if (style && style != "undefined") node.setAttribute("style", style);
+        node.setAttribute("d", combinePaths(items.map(getPath)));
+        return node;
+      });
     }
   }
 
