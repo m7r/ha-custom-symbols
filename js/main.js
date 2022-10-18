@@ -5,6 +5,9 @@ const CONFIG = {
   ":": "color",
   "#": "mode",
   "%": "breakPoint",
+  b: {
+    prefix: "monochrome",
+  },
   v: {
     prefix: "monochrome",
     fade: 0.6,
@@ -37,7 +40,6 @@ const compareOrder = (a, b) => a.order > b.order;
 const getPath = (item) => item.path;
 const combinePaths = (paths) =>
   paths.map((path) => path.getAttribute("d")).join(" ");
-const isMonochrome = (path) => String(path.classList).includes(CONFIG.v.prefix);
 
 const getOption = (name, target) =>
   name.split(/([-:#%])/).reduce((target, value, idx, arr) => {
@@ -80,26 +82,29 @@ const mergeColors = (parts) =>
 
 const createStyle = (items, config) => {
   const last = items[items.length - 1];
-  let style = "";
+  let styles = [];
 
   if (last.color) {
     const color = last.color.replace("Fade", "");
-    style +=
+    const style =
       config[color] ||
       (config.useFill &&
         `fill: var(--cs-${color}, ${last.path.getAttribute("fill")})`);
+    if (style) styles.push(style);
   }
 
-  if (last.fade) style += `; opacity: ${Math.abs(1 + last.fade + config.fade)}`;
+  if (last.fade) {
+    styles.push(`opacity: ${Math.abs(1 + last.fade + config.fade)}`);
+  }
 
-  return style;
+  return styles.join("; ");
 };
 
 const preProcessIcon = async (iconSet, iconName) => {
   const [icon, suffix = ""] = iconName.split("#");
   const [type, value] = suffix.split(/(\d+)/);
   const hasValue = value !== undefined;
-  const config = CONFIG[type[0]] || (hasValue && CONFIG.v);
+  const config = CONFIG[type[0]] || (hasValue ? CONFIG.v : CONFIG.b);
   let viewBox;
   let path = "";
   let nodes = null;
@@ -117,30 +122,27 @@ const preProcessIcon = async (iconSet, iconName) => {
 
   if (config) {
     let parts = paths.flatMap(extractMode(config)).sort(compareOrder);
-
     if (hasValue) parts = makeDynamic(parts, value);
+    parts = mergeColors(parts);
 
-    const length = parts.length;
+    nodes = parts.map((items) => {
+      const node = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "path"
+      );
+      const style = createStyle(items, config);
+      if (style) node.setAttribute("style", style);
+      node.setAttribute("d", combinePaths(items.map(getPath)));
+      return node;
+    });
 
-    if (length == 1 && (config == CONFIG.v || config == CONFIG.h)) {
-      path = parts[0].path.getAttribute("d");
-    }
-
-    if (length && !path) {
-      nodes = mergeColors(parts).map((items) => {
-        const node = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "path"
-        );
-        const style = createStyle(items, config);
-        if (style && style != "undefined") node.setAttribute("style", style);
-        node.setAttribute("d", combinePaths(items.map(getPath)));
-        return node;
-      });
+    if (!config.primary && nodes.length == 1) {
+      path = nodes[0].getAttribute("d");
+      nodes = null;
     }
   }
 
-  if (!path && !nodes) path = combinePaths(paths.filter(isMonochrome));
+  if (!path && !nodes) path = combinePaths(paths); // fallback for missing class
 
   return { path, viewBox, nodes };
 };
