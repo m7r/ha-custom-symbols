@@ -86,11 +86,14 @@ const createStyle = (items, config) => {
 
   if (last.color) {
     const color = last.color.replace("Fade", "");
+    const fill = config.useFill && (last.path.getAttribute("fill") || "#000");
     const style =
       config[color] ||
-      (config.useFill &&
-        `fill: var(--cs-${color}, ${last.path.getAttribute("fill")})`);
+      (fill && `fill: var(--cs-${color}, ${fill.slice(0, 7)})`);
     if (style) styles.push(style);
+    if (fill?.length > 7) {
+      styles.push(`opacity: ${parseInt(fill.slice(7, 9), 16) / 255}`);
+    }
   }
 
   if (last.fade) {
