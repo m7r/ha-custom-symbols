@@ -1,0 +1,24 @@
+{
+  "title": "Custom Symbols",
+  "config": {
+    "abort": {
+      "single_instance_allowed": "Für Custom Symbols ist nur eine Konfiguration möglich."
+    },
+    "step": {}
+  },
+  "options": {
+    "error": {
+      "invalid_map_entry": "Der Eintrag war ungültig!"
+    },
+    "step": {
+      "init": {
+        "title": "Icons austauschen",
+        "description": "Nicht alle Icons können in den Voreinstellungen angepasst werden.\nz.B. Batterie oder Cover Status Varianten.\n\nNach Änderungen bitte die Seite neuladen. Manchmal muss auch der Browser Cache geleert werden.",
+        "data": {
+          "replacements": "Abwählen um den Eintrag zu entfernen:",
+          "replacement": "Neuen Eintrag erstellen, z.B. mdi:ha > cs:ha#h"
+        }
+      }
+    }
+  }
+}
