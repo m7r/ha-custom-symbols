@@ -28,6 +28,7 @@ The icons should be usable in Home Assistant now. If it doesnt show up, try refr
 ## Features
 
 - Supports Home Assistant's icon picker (2021.11.0+)
+- Replace icon by name, configure in settings menu
 - Only one example SVG file included, please use our own files
 - Rendering Modes
   - Monochrome
