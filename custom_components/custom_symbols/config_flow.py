@@ -1,47 +1,51 @@
 """Config flow for Custom Symbols integration."""
 
+from __future__ import annotations
+from typing import Any
+
 import voluptuous as vol
 from homeassistant.helpers import config_validation as cv
 
-from homeassistant import config_entries
+from homeassistant.config_entries import ConfigFlow, OptionsFlow, ConfigEntry
+from homeassistant.data_entry_flow import FlowResult
 from homeassistant.core import callback
 
 from .const import DOMAIN, DIR, CONF_REPLACEMENT, CONF_REPLACEMENTS
 from .mapping import mapping_get, mapping_parse, mapping_data
 
 from shutil import copytree
+from os import path
 
-class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class CustomSymbolsConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Custom Symbols."""
 
     VERSION = 1
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry):
+    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
         """Create the options flow."""
         return OptionsFlowHandler(config_entry)
 
-    async def async_step_user(self):
+    async def async_step_user(self, user_input: dict[str, Any] = None) -> FlowResult:
+        """Copy example at install and allow only one instance"""
         if self._async_current_entries():
             return self.async_abort(reason="single_instance_allowed")
-
         try:
             copytree(path.join(DIR, 'data'), 'custom_symbols')
-        except:
+        except IOError:
             pass
-
         return self.async_create_entry(title="", data={})
 
 
-class OptionsFlowHandler(config_entries.OptionsFlow):
+class OptionsFlowHandler(OptionsFlow):
     """Handle a option flow."""
 
-    def __init__(self, config_entry):
+    def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize options flow."""
         self.config_entry = config_entry
 
-    async def async_step_init(self, user_input=None):
+    async def async_step_init(self, user_input: dict[str, Any] = None) -> FlowResult:
         """Handle options flow."""
         errors = {}
         current_map = mapping_get(self.config_entry)
@@ -57,7 +61,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                         **updated_map,
                         **mapping_parse(user_input.get(CONF_REPLACEMENT))
                     }
-                except:
+                except ValueError:
                     errors["base"] = "invalid_map_entry"
 
 

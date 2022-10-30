@@ -1,4 +1,9 @@
 """The Custom Symbols integration."""
+
+from __future__ import annotations
+
+from homeassistant.core import HomeAssistant
+from homeassistant.config_entries import ConfigEntry, ConfigType
 from homeassistant.components.frontend import add_extra_js_url
 from homeassistant.components.http.view import HomeAssistantView
 
@@ -17,16 +22,18 @@ ICON_PATH = 'custom_symbols'
 
 
 class ListingView(HomeAssistantView):
+    """HTTP endpoint for list of symbol names"""
     requires_auth = False
 
-    def __init__(self, url, iconpath):
+    def __init__(self, url, iconpath) -> None:
         self.url = url
         self.iconpath = iconpath
         self.name = "Icon Listing"
 
     async def get(self, request):
+        """Send list of symbol names from file names"""
         icons = []
-        for (dirpath, dirnames, filenames) in walk(self.iconpath):
+        for (dirpath, _, filenames) in walk(self.iconpath):
             icons.extend(
                 [
                     {
@@ -38,18 +45,21 @@ class ListingView(HomeAssistantView):
 
 
 class ReplacementView(HomeAssistantView):
+    """HTTP endpoint for replacement map"""
     requires_auth = False
 
-    def __init__(self, url, entry):
+    def __init__(self, url: str , entry: ConfigEntry)  -> None:
         self.url = url
         self.entry = entry
         self.name = "Icon Replacement Map"
 
-    async def get(self, request):
+    async def get(self, request) -> str:
+        """Send map from options"""
         return self.json(mapping_get(self.entry))
 
 
-async def async_setup(hass, config):
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Register http end points"""
     hass.http.register_static_path(
         LOADER_URL,
         hass.config.path(LOADER_PATH),
@@ -73,7 +83,8 @@ async def async_setup(hass, config):
     return True
 
 
-async def async_setup_entry(hass, entry):
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Register HTTP endpoint for replacement map"""
     hass.http.register_view(
         ReplacementView(
             ICONREPLACEMENT_URL,
@@ -81,8 +92,4 @@ async def async_setup_entry(hass, entry):
         )
     )
 
-    return True
-
-
-async def async_remove_entry(hass, entry):
     return True
