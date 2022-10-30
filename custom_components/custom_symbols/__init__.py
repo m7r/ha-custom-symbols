@@ -4,10 +4,10 @@ from homeassistant.components.http.view import HomeAssistantView
 from os import walk, path
 
 DOMAIN = "custom_symbols"
-
+DIR = path.dirname(path.realpath(__file__))
 DATA_EXTRA_MODULE_URL = 'frontend_extra_module_url'
 LOADER_URL = f'/{DOMAIN}/main.js'
-LOADER_PATH = f'custom_components/{DOMAIN}/main.js'
+LOADER_PATH = f'{DIR}/main.js'
 ICON_URL = f'/{DOMAIN}/icon/cs'
 ICONLIST_URL = f'/{DOMAIN}/list/cs'
 ICON_PATH = 'custom_symbols'
