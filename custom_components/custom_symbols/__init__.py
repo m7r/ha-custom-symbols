@@ -24,7 +24,13 @@ class ListingView(HomeAssistantView):
     async def get(self, request):
         icons = []
         for (dirpath, dirnames, filenames) in walk(self.iconpath):
-            icons.extend([{"name": path.join(dirpath[len(self.iconpath):], fn[:-4])} for fn in filenames if fn.endswith(".svg")])
+            icons.extend(
+                [
+                    {
+                        "name": path.join(dirpath[len(self.iconpath):], fn[:-4])
+                    } for fn in filenames if fn.endswith(".svg")
+                ]
+            )
         return self.json(icons)
 
 
