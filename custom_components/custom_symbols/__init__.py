@@ -1,7 +1,6 @@
 from homeassistant.components.frontend import add_extra_js_url
 from homeassistant.components.http.view import HomeAssistantView
 
-import json
 from os import walk, path
 
 DOMAIN = "custom_symbols"
@@ -26,7 +25,7 @@ class ListingView(HomeAssistantView):
         icons = []
         for (dirpath, dirnames, filenames) in walk(self.iconpath):
             icons.extend([{"name": path.join(dirpath[len(self.iconpath):], fn[:-4])} for fn in filenames if fn.endswith(".svg")])
-        return json.dumps(icons)
+        return self.json(icons)
 
 
 async def async_setup(hass, config):
