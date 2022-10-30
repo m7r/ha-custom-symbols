@@ -8,8 +8,8 @@ DOMAIN = "custom_symbols"
 DATA_EXTRA_MODULE_URL = 'frontend_extra_module_url'
 LOADER_URL = f'/{DOMAIN}/main.js'
 LOADER_PATH = f'custom_components/{DOMAIN}/main.js'
-ICON_URL = f'/{DOMAIN}/icon'
-ICONLIST_URL = f'/{DOMAIN}/list'
+ICON_URL = f'/{DOMAIN}/icon/cs'
+ICONLIST_URL = f'/{DOMAIN}/list/cs'
 ICON_PATH = 'custom_symbols'
 
 
@@ -43,13 +43,14 @@ async def async_setup(hass, config):
     add_extra_js_url(hass, LOADER_URL)
 
     hass.http.register_static_path(
-        ICON_URL + "/cs",
+        ICON_URL,
         hass.config.path(ICON_PATH),
         True
     )
+
     hass.http.register_view(
         ListingView(
-            ICONLIST_URL + "/cs",
+            ICONLIST_URL,
             hass.config.path(ICON_PATH)
         )
     )
