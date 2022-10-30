@@ -3,7 +3,7 @@
   "name": "Custom Symbols",
   "documentation": "https://github.com/m7r/ha-custom-symbols",
   "dependencies": ["frontend", "http"],
-  "codeowners": [],
+  "codeowners": ["@m7r"],
   "requirements": [],
   "config_flow": true,
   "version": "1.0.0",
