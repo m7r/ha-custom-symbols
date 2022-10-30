@@ -1,15 +1,18 @@
+"""The Custom Symbols integration."""
 from homeassistant.components.frontend import add_extra_js_url
 from homeassistant.components.http.view import HomeAssistantView
 
 from os import walk, path
+from .const import DOMAIN, DIR
+from .mapping import mapping_get
 
-DOMAIN = "custom_symbols"
 DIR = path.dirname(path.realpath(__file__))
 DATA_EXTRA_MODULE_URL = 'frontend_extra_module_url'
 LOADER_URL = f'/{DOMAIN}/main.js'
 LOADER_PATH = f'{DIR}/main.js'
 ICON_URL = f'/{DOMAIN}/icon/cs'
 ICONLIST_URL = f'/{DOMAIN}/list/cs'
+ICONREPLACEMENT_URL = f'/{DOMAIN}/replace/cs'
 ICON_PATH = 'custom_symbols'
 
 
@@ -32,6 +35,18 @@ class ListingView(HomeAssistantView):
                 ]
             )
         return self.json(icons)
+
+
+class ReplacementView(HomeAssistantView):
+    requires_auth = False
+
+    def __init__(self, url, entry):
+        self.url = url
+        self.entry = entry
+        self.name = "Icon Replacement Map"
+
+    async def get(self, request):
+        return self.json(mapping_get(self.entry))
 
 
 async def async_setup(hass, config):
@@ -59,6 +74,13 @@ async def async_setup(hass, config):
 
 
 async def async_setup_entry(hass, entry):
+    hass.http.register_view(
+        ReplacementView(
+            ICONREPLACEMENT_URL,
+            entry
+        )
+    )
+
     return True
 
 

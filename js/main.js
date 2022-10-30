@@ -173,8 +173,15 @@ window.customIcons["cs"] = {
   getIconList: () => getIconList("cs"),
 };
 
-customElements.whenDefined("ha-icon").then(() => {
+customElements.whenDefined("ha-icon").then(async () => {
+  const iconMap = await (await fetch(`/${DOMAIN}/replace/cs`)).json();
   const HaIcon = customElements.get("ha-icon");
+  const loadIcon = HaIcon.prototype._loadIcon;
+
+  HaIcon.prototype._loadIcon = async function () {
+    if (this.icon in iconMap) this.icon = iconMap[this.icon];
+    return loadIcon.apply(this, arguments);
+  };
 
   HaIcon.prototype._setCustomPath = async function (promise, requestedIcon) {
     const icon = await promise;

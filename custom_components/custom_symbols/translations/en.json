@@ -1,9 +1,24 @@
 {
-  "title": "Cupertino Icons",
+  "title": "Custom Symbols",
   "config": {
     "abort": {
-      "single_instance_allowed": "Only a single configuration of Cupertino Icons is allowed."
+      "single_instance_allowed": "Only a single configuration of Custom Symbols is allowed."
     },
     "step": {}
+  },
+  "options": {
+    "error": {
+      "invalid_map_entry": "The map entry was invalid!"
+    },
+    "step": {
+      "init": {
+        "title": "Manage Icon Replacement",
+        "description": "Not all icons can be changed in the preferences. EG: battery or cover states.\n\nReload the page after changes. Sometimes it is also necessary to clear the browser cache.",
+        "data": {
+          "replacements": "Uncheck to remove entry:",
+          "replacement": "Add an entry like mdi:ha > cs:ha#h"
+        }
+      }
+    }
   }
 }
