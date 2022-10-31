@@ -36,6 +36,7 @@ const CONFIG = {
   },
 };
 
+const noop = () => {};
 const fetchJSON = async (url) => (await fetch(url)).json();
 const compareOrder = (a, b) => a.order > b.order;
 const getPath = (item) => item.path;
@@ -151,6 +152,26 @@ const preProcessIcon = async (iconSet, iconName) => {
   return { path, viewBox, nodes };
 };
 
+async function getIconPath(icon) {
+  const helper = document.createElement("ha-icon");
+  helper.icon = icon;
+  await helper._loadIcon();
+  return helper._path;
+}
+
+async function getIconPathEntry([icon, name]) {
+  const path = await getIconPath(icon);
+  if (!path) console.error(`Custom Symbols: Invalid icon ${icon}`);
+  return path && [path, await getIcon(...name.split(":"))];
+}
+
+async function createPathMap(iconMap) {
+  const entries = await Promise.all(
+    Object.entries(iconMap).map(getIconPathEntry)
+  );
+  return Object.fromEntries(entries.filter(Boolean));
+}
+
 const getIcon = async (iconSet, iconName) => {
   const icon = `${iconSet}:${iconName}`;
   if (!ICON_STORE[icon]) {
@@ -170,35 +191,64 @@ window.customIcons["cs"] = {
   getIconList: () => getIconList("cs"),
 };
 
-customElements.whenDefined("ha-icon").then(async () => {
-  const iconMap = await fetchJSON(`/${DOMAIN}/replace/cs`);
-  const HaIcon = customElements.get("ha-icon");
-  const loadIcon = HaIcon.prototype._loadIcon;
+Promise.all([
+  customElements.whenDefined("ha-icon"),
+  customElements.whenDefined("ha-svg-icon"),
+])
+  .then(async () => {
+    const iconMap = await fetchJSON(`/${DOMAIN}/replace/cs`);
+    const pathMap = await createPathMap(iconMap);
+    const HaIcon = customElements.get("ha-icon");
+    const loadIcon = HaIcon.prototype._loadIcon;
+    const HaSvgIcon = customElements.get("ha-svg-icon");
+    const pathDesc = Object.getOwnPropertyDescriptor(
+      HaSvgIcon.prototype,
+      "path"
+    );
+    const setPath = pathDesc.set;
 
-  HaIcon.prototype._loadIcon = async function () {
-    if (this.icon in iconMap) this.icon = iconMap[this.icon];
-    return loadIcon.apply(this, arguments);
-  };
+    pathDesc.set = function (path) {
+      if (path in pathMap) {
+        const icon = pathMap[path];
+        setPath.call(this, icon.path);
+        this.viewBox = icon.viewBox;
+        this.setNodes(icon.nodes).catch(noop);
+      } else {
+        setPath.call(this, path);
+      }
+    };
 
-  HaIcon.prototype._setCustomPath = async function (promise, requestedIcon) {
-    const icon = await promise;
+    Object.defineProperty(HaSvgIcon.prototype, "path", pathDesc);
 
-    if (requestedIcon !== this.icon) return;
+    HaSvgIcon.prototype.setNodes = async function (nodes) {
+      if (!nodes) return;
+      await this.updateComplete;
 
-    this._path = icon.path;
-    this._viewBox = icon.viewBox;
-
-    if (icon.nodes) {
-      await this.UpdateComplete;
-      const el = this.shadowRoot.querySelector("ha-svg-icon");
-      if (!el) return;
-
-      await el.updateComplete;
-
-      const root = el.shadowRoot.querySelector("g");
+      const root = this.shadowRoot.querySelector("g");
       if (!root) return;
-      root.innerText = "";
-      icon.nodes.forEach((node) => root.appendChild(node.cloneNode(true)));
-    }
-  };
-});
+      root.innerHTML = "";
+      nodes.forEach((node) => root.appendChild(node.cloneNode(true)));
+    };
+
+    HaIcon.prototype._loadIcon = async function () {
+      if (this.icon in iconMap) this.icon = iconMap[this.icon];
+      return loadIcon.apply(this, arguments);
+    };
+
+    HaIcon.prototype._setCustomPath = async function (promise, requestedIcon) {
+      const icon = await promise;
+
+      if (requestedIcon !== this.icon) return;
+
+      this._path = icon.path;
+      this._viewBox = icon.viewBox;
+
+      if (icon.nodes) {
+        await this.UpdateComplete;
+        const el = this.shadowRoot.querySelector("ha-svg-icon");
+        if (!el) return;
+        return el.setNodes(icon.nodes);
+      }
+    };
+  })
+  .catch(console.error);
