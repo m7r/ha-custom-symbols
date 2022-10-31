@@ -36,6 +36,7 @@ const CONFIG = {
   },
 };
 
+const fetchJSON = async (url) => (await fetch(url)).json();
 const compareOrder = (a, b) => a.order > b.order;
 const getPath = (item) => item.path;
 const combinePaths = (paths) =>
@@ -158,11 +159,7 @@ const getIcon = async (iconSet, iconName) => {
   return ICON_STORE[icon];
 };
 
-const getIconList = async (iconSet) => {
-  const data = await fetch(`/${DOMAIN}/list/${iconSet}`);
-  const text = await data.text();
-  return JSON.parse(text);
-};
+const getIconList = async (iconSet) => fetchJSON(`/${DOMAIN}/list/${iconSet}`);
 
 if (!("customIcons" in window)) {
   window.customIcons = {};
@@ -174,7 +171,7 @@ window.customIcons["cs"] = {
 };
 
 customElements.whenDefined("ha-icon").then(async () => {
-  const iconMap = await (await fetch(`/${DOMAIN}/replace/cs`)).json();
+  const iconMap = await fetchJSON(`/${DOMAIN}/replace/cs`);
   const HaIcon = customElements.get("ha-icon");
   const loadIcon = HaIcon.prototype._loadIcon;
 
