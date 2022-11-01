@@ -199,40 +199,40 @@ Promise.all([
     const iconMap = await fetchJSON(`/${DOMAIN}/replace/cs`);
     const pathMap = await createPathMap(iconMap);
     const HaIcon = customElements.get("ha-icon");
-    const loadIcon = HaIcon.prototype._loadIcon;
     const HaSvgIcon = customElements.get("ha-svg-icon");
     const pathDesc = Object.getOwnPropertyDescriptor(
       HaSvgIcon.prototype,
       "path"
     );
     const setPath = pathDesc.set;
-
     pathDesc.set = function (path) {
       if (path in pathMap) {
         const icon = pathMap[path];
         setPath.call(this, icon.path);
-        this.viewBox = icon.viewBox;
-        this.setNodes(icon.nodes).catch(noop);
+        this.setIcon(icon).catch(noop);
       } else {
         setPath.call(this, path);
+        this.clearPaths().catch(noop);
       }
     };
-
     Object.defineProperty(HaSvgIcon.prototype, "path", pathDesc);
 
-    HaSvgIcon.prototype.setNodes = async function (nodes) {
-      if (!nodes) return;
+    HaSvgIcon.prototype.clearPaths = async function () {
       await this.updateComplete;
-
-      const root = this.shadowRoot.querySelector("g");
-      if (!root) return;
-      root.innerHTML = "";
-      nodes.forEach((node) => root.appendChild(node.cloneNode(true)));
+      const svgGroup = this.shadowRoot.querySelector("g");
+      while (svgGroup?.childElementCount > 1) {
+        svgGroup.removeChild(svgGroup.lastChild);
+      }
+      return svgGroup;
     };
 
-    HaIcon.prototype._loadIcon = async function () {
-      if (this.icon in iconMap) this.icon = iconMap[this.icon];
-      return loadIcon.apply(this, arguments);
+    HaSvgIcon.prototype.setIcon = async function ({
+      nodes = [],
+      viewBox = null,
+    }) {
+      const el = await this.clearPaths();
+      if (viewBox != null) this.viewBox = viewBox;
+      nodes.forEach((node) => el?.appendChild(node.cloneNode(true)));
     };
 
     HaIcon.prototype._setCustomPath = async function (promise, requestedIcon) {
@@ -246,8 +246,7 @@ Promise.all([
       if (icon.nodes) {
         await this.UpdateComplete;
         const el = this.shadowRoot.querySelector("ha-svg-icon");
-        if (!el) return;
-        return el.setNodes(icon.nodes);
+        return el?.setIcon(icon);
       }
     };
   })
