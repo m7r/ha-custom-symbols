@@ -111,7 +111,7 @@ const preProcessIcon = async (iconSet, iconName) => {
   const hasValue = value !== undefined;
   const config = CONFIG[type[0]] || (hasValue ? CONFIG.v : CONFIG.b);
   let viewBox;
-  let path = "";
+  let path = " ";
   let nodes = null;
 
   const data = await fetch(`/${DOMAIN}/icon/${iconSet}/${icon}.svg`);
@@ -147,7 +147,7 @@ const preProcessIcon = async (iconSet, iconName) => {
     }
   }
 
-  if (!path && !nodes) path = combinePaths(paths); // fallback for missing class
+  if (path === " " && !nodes) path = combinePaths(paths); // fallback for missing class
 
   return { path, viewBox, nodes };
 };
