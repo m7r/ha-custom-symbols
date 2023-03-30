@@ -208,9 +208,12 @@ Promise.all([
     pathDesc.set = function (path) {
       if (path in pathMap) {
         const icon = pathMap[path];
+        this._viewBox_ = this.viewBox;
         setPath.call(this, icon.path);
         this.setIcon(icon).catch(noop);
       } else {
+        this.viewBox = this._viewBox_;
+        delete this._viewBox_;
         setPath.call(this, path);
         this.clearPaths().catch(noop);
       }
@@ -245,8 +248,7 @@ Promise.all([
 
       if (icon.nodes) {
         await this.UpdateComplete;
-        const el = this.shadowRoot.querySelector("ha-svg-icon");
-        return el?.setIcon(icon);
+        return this.shadowRoot.querySelector("ha-svg-icon")?.setIcon(icon);
       }
     };
   })
