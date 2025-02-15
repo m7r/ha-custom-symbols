@@ -1,9 +1,8 @@
 """Constants for the Custom Symbols integration."""
 
-from os import path
+from pathlib import Path
 
-DIR = path.dirname(path.realpath(__file__))
-
+DIR = Path(__file__).parent
 DOMAIN = "custom_symbols"
 
 CONF_REPLACEMENT = "replacement"
